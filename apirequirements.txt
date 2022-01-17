@@ -1,3 +1,2 @@
 # requirements for API to publish weather data on network
 flask
-pywws
