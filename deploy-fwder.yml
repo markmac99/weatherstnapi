@@ -1,6 +1,8 @@
-- hosts: wxsatpi
+- hosts: thelinux # wxsatpi
   vars:
     srcdir: /mnt/e/dev/energy/weatherdata
+  environment: 
+    LD_LIBRARY_PATH: /usr/local/lib
   tasks:
   - name: import prod variables
     include_vars: local-vars.yml
