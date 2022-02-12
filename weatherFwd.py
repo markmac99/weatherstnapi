@@ -38,7 +38,7 @@ class WeatherFwd(threading.Thread):
                 FeelsLike = openhab.get_item('OutsideFeels')
                 RelPressure = openhab.get_item('RelPressure')
             except:
-                print('problem updating openhab')
+                print('problem connecting to openhab')
             else:
                 res = requests.get(weather_URL+'/values', timeout=10)
                 if res.status_code == 200:
@@ -46,9 +46,12 @@ class WeatherFwd(threading.Thread):
                     tempin = float(data['temp_in'])
                     feels = float(data['feels_like'])
                     press = float(data['rel_pressure'])
-                    InsideTemp.state = tempin
-                    FeelsLike.state = feels
-                    RelPressure.state = press
+                    try:
+                        InsideTemp.state = tempin
+                        FeelsLike.state = feels
+                        RelPressure.state = press
+                    except: 
+                        print('unable to update openhab with tempin, feels and press')
                     print(tempin, feels, press)
                 else:
                     print('unable to reach weatherstation')
@@ -57,7 +60,10 @@ class WeatherFwd(threading.Thread):
                 if res2.status_code == 200:
                     data2 = json.loads(res2.text)[0]
                     tempout = float(data2['temp_out'])
-                    OutsideTemp.state = tempout
+                    try:
+                        OutsideTemp.state = tempout
+                    except: 
+                        print('unable to update openhab with tempout')
                     print(tempout)
                 else:
                     print('unable to reach weatherstation')          
