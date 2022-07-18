@@ -1,2 +1,3 @@
 apidir: ~/source/weatherapi
 fwddir: ~/source/openhabstuff/weatherfwd
+wudir: ~/mmwebsite/getwu

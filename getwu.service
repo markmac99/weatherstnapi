@@ -1,0 +1,11 @@
+[Unit]
+Description=Get Wunderground Data 
+
+[Service]
+ExecStart=/home/ec2-user/mmwebsite/getwu/getBresserData.sh
+
+[Install]
+WantedBy=multi-user.target
+
+# copy this file to /lib/systemd/system/ then run
+# sudo systemctl daemon-reload && sudo systemctl enable getwu && sudo systemctl start getwu
