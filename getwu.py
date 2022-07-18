@@ -20,6 +20,7 @@ BASE_URL = 'https://api.weather.com/'
 LIVEDATA_URL = 'v2/pws/observations/current?' 
 LOG_DIRECTORY = './logs/'
 num_max_retries = 20
+sleep_time = 60 # wunderground limits you to 1500 requests per day = 1 per min
 
 
 @backoff.on_exception(
@@ -32,7 +33,7 @@ class WuData(threading.Thread):
 
     def __init__(self, stationid, apikey):
 
-        log = "Start Intalising: " + str(datetime.now())
+        self.writeLogEntry("Start Intalising: " + str(datetime.now()))
         threading.Thread.__init__(self)
         #super(Thread, self).__init__()
         self._stop = threading.Event()
@@ -40,9 +41,8 @@ class WuData(threading.Thread):
         self.key = apikey
         self.headers = ""
         self.deviceId = ""
-        log = log + os.linesep + "End Intalising: " + str(datetime.now())
-        self.writeLogEntry(log)
-        self.ttlcountdown = 0
+        self.writeLogEntry("End Intalising: " + str(datetime.now()))
+        #self.ttlcountdown = 0
 
     def writeLogEntry(self, msg):
         with open(LOG_DIRECTORY+"WULog"+time.strftime("%Y%m%d")+".log", mode='a+', encoding='utf-8') as f:
@@ -66,13 +66,12 @@ class WuData(threading.Thread):
             if self.stopped():
                 return
 
-            log = "Start Api Call: " + str(datetime.now())
+            self.writeLogEntry("Start Api Call: " + str(datetime.now()))
             url = BASE_URL + LIVEDATA_URL + f'stationId={self.sid}&format=json&units=m&apiKey={self.key}&numericPrecision=decimal'
             r = requests.get(url, headers=self.headers)
             if r.status_code != 200:
                 # Not successful. Assume Authentication Error
-                log = log + os.linesep + \
-                    "Request Status Error:" + str(r.status_code)
+                self.writeLogEntry("Request Status Error:" + str(r.status_code))
             else:
                 data_dict = json.loads(r.text)['observations'][0]
                 dtutc = data_dict['obsTimeUtc']
@@ -104,10 +103,10 @@ class WuData(threading.Thread):
 
                 self.writeLogEntry(f'\n{evt_time},{temp}, {feels_like}, {pressure}, {windSpeed}, {windGust},')
                 self.writeLogEntry(f'{windir}, {humid}, {uvidx}, {solrad} {dewpt}, {precipRate},{precipTotal}')
+
                 # update openhab
                 openhab = OpenHAB(getOpenhabURL())
                 OutsideTemp = openhab.get_item('OutsideTemp2')
-                #InsideTemp = openhab.get_item('HouseTemperature')
                 FeelsLike = openhab.get_item('OutsideFeelsLike2')
                 RelPressure = openhab.get_item('RelPressure2')
 
@@ -115,8 +114,8 @@ class WuData(threading.Thread):
                 FeelsLike.state = feels_like
                 RelPressure.state = pressure
 
-            time.sleep(10)
-            self.ttlcountdown -= 10
+            time.sleep(sleep_time)
+            #self.ttlcountdown -= 10
 
 
 # main function
