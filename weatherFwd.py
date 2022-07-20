@@ -37,6 +37,11 @@ class WeatherFwd(threading.Thread):
                 InsideTemp = openhab.get_item('HouseTemperature')
                 FeelsLike = openhab.get_item('OutsideFeels')
                 RelPressure = openhab.get_item('RelPressure')
+                Humidity = openhab.get_item('Humidity_m')
+                RainRate = openhab.get_item('RainRate_m')
+                WindSpeed = openhab.get_item('WindSpeed_m')
+                WindGust = openhab.get_item('WindGust_m')
+                WindDir = openhab.get_item('WindDir_m')
             except:
                 print('problem connecting to openhab')
             else:
@@ -46,12 +51,22 @@ class WeatherFwd(threading.Thread):
                     tempin = float(data['temp_in'])
                     feels = float(data['feels_like'])
                     press = float(data['rel_pressure'])
+                    hum = float(data['hum_out'])
+                    rain = float(data['rain'])
+                    wind_s = float(data['wind_ave'])
+                    wind_g = float(data['wind_gust'])
+                    wind_d = float(data['wind_dir'])
                     try:
                         InsideTemp.state = tempin
                         FeelsLike.state = feels
                         RelPressure.state = press
+                        Humidity.state = hum
+                        RainRate.state = rain
+                        WindSpeed.state = wind_s
+                        WindGust.state = wind_g
+                        WindDir.state = wind_d
                     except: 
-                        print('unable to update openhab with tempin, feels and press')
+                        print('unable to update openhab')
                     print(tempin, feels, press)
                 else:
                     print('unable to reach weatherstation')

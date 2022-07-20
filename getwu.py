@@ -66,12 +66,12 @@ class WuData(threading.Thread):
             if self.stopped():
                 return
 
-            self.writeLogEntry("Start Api Call: " + str(datetime.now()))
+            #self.writeLogEntry("Start Api Call: " + str(datetime.now()))
             url = BASE_URL + LIVEDATA_URL + f'stationId={self.sid}&format=json&units=m&apiKey={self.key}&numericPrecision=decimal'
             r = requests.get(url, headers=self.headers)
             if r.status_code != 200:
                 # Not successful. Assume Authentication Error
-                self.writeLogEntry("Request Status Error:" + str(r.status_code))
+                self.writeLogEntry("\nRequest Status Error:" + str(r.status_code))
             else:
                 data_dict = json.loads(r.text)['observations'][0]
                 dtutc = data_dict['obsTimeUtc']
@@ -106,8 +106,8 @@ class WuData(threading.Thread):
 
                 # update openhab
                 openhab = OpenHAB(getOpenhabURL())
-                OutsideTemp = openhab.get_item('OutsideTemp2')
-                FeelsLike = openhab.get_item('OutsideFeelsLike2')
+                OutsideTemp = openhab.get_item('OutsideTemp_wubr')
+                FeelsLike = openhab.get_item('OutsideFeelsLike_wubr')
                 RelPressure = openhab.get_item('RelPressure2')
 
                 OutsideTemp.state = temp
