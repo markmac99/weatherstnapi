@@ -3,7 +3,7 @@ Description=Get Wunderground Data
 After=network.target
 
 [Service]
-ExecStart=/home/ec2-user/mmwebsite/getwu/getBresserData.sh
+ExecStart=/home/bitnami/mmwebsite/getwu/getBresserData.sh
 Restart=always
 RestartSec=5
 

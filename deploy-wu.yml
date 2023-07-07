@@ -1,4 +1,4 @@
-- hosts: ukmonhelper
+- hosts: wordpresssite #ukmonhelper
   vars:
     srcdir: /mnt/e/dev/energy/weatherdata
   environment: 
@@ -16,4 +16,6 @@
     - {src: '{{srcdir}}/getwu.py', dest: '{{wudir}}/', mode: '644', backup: yes }
     - {src: '{{srcdir}}/wuconfig.py', dest: '{{wudir}}/', mode: '644', backup: yes }
     - {src: '{{srcdir}}/getBresserData.sh', dest: '{{wudir}}/', mode: '754', backup: yes }
+    - {src: '{{srcdir}}/installGetWu.sh', dest: '{{wudir}}/', mode: '754', backup: yes }
     - {src: '{{srcdir}}/getwu.service', dest: '{{wudir}}/', mode: '644', backup: yes }
+    - {src: '{{srcdir}}/wurequirements.txt', dest: '{{wudir}}/', mode: '644', backup: yes }
