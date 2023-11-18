@@ -1,6 +1,6 @@
 - hosts: thelinux # wxsatpi
   vars:
-    srcdir: /mnt/e/dev/energy/weatherdata
+    srcdir: /mnt/e/dev/weather/weatherstnapi/weatherfwd
   environment: 
     LD_LIBRARY_PATH: /usr/local/lib
   tasks:

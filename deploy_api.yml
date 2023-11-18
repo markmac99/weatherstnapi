@@ -1,6 +1,6 @@
 - hosts: weatherpi
   vars:
-    srcdir: /mnt/e/dev/weatherstnapi/weatherapi
+    srcdir: /mnt/e/dev/weather/weatherstnapi/weatherapi
   tasks:
   - name: import prod variables
     include_vars: local-vars.yml

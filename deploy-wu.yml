@@ -1,6 +1,6 @@
 - hosts: wordpresssite #ukmonhelper
   vars:
-    srcdir: /mnt/e/dev/weatherstnapi/getwu
+    srcdir: /mnt/e/dev/weather/weatherstnapi/getwu
   environment: 
     LD_LIBRARY_PATH: /usr/local/lib
   tasks:
