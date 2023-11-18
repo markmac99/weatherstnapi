@@ -2,3 +2,4 @@
 
 python-openhab
 backoff
+paho-mqtt
