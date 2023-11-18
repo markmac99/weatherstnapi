@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 ExecStart=/home/bitnami/mmwebsite/getwu/getBresserData.sh
+ExecStop=/usr/bin/touch /home/bitnami/mmwebsite/getwu/stopwu
 Restart=always
 RestartSec=5
 
