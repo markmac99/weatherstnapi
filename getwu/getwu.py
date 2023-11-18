@@ -17,6 +17,7 @@ STOPFILE = './stopgetwu'
 MAX_RETRIES = 20
 SLEEP_TIME = 60 # wunderground limits you to 1500 requests per day = 1 per min
 
+
 # The MQTT callback function. It will be triggered when trying to connect to the MQTT broker
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -40,10 +41,13 @@ def sendDataToMQTT(data):
     client.connect(broker, mqport, 60)
     topic = f'sensors/bresser_wu/{data[0]}'
     ret = client.publish(topic, payload=data[1], qos=0, retain=False)
+    return ret
+
 
 def writeLogEntry(msg):
     with open(LOG_DIRECTORY+"WULog"+datetime.datetime.now().strftime("%Y%m%d")+".log", mode='a+', encoding='utf-8') as f:
         f.write(msg)
+
 
 def correctForAltitude(press, temp, alti):
     denom = temp + 273.15 + 0.0065 * alti
