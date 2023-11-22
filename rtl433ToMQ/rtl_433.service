@@ -1,0 +1,15 @@
+[Unit]
+Description=Get WH1080 data from Rtl433
+After=network.target
+
+[Service]
+ExecStart=/home/pi/weather/runRtl433.sh
+ExecStop=/home/pi/weather/stopRtl433.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+# copy this file to /lib/systemd/system/ then run
+# sudo systemctl daemon-reload && sudo systemctl enable getwu && sudo systemctl start getwu
