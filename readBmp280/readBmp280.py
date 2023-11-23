@@ -8,7 +8,7 @@ import smbus
 import time
 import datetime
 import os
-
+import json
 import paho.mqtt.client as mqtt
 
 
@@ -140,13 +140,25 @@ def getTempAndPress():
     cTemp = round(cTemp,2)
     #writeLogEntry(f'temp_c_in: {cTemp}, press_rel: {pressure}\n')
     now = datetime.datetime.now().isoformat()[:19]+'Z'
+    pressure = correctForAltitude(pressure, cTemp, 80)
     return {'temp_c_in': cTemp, 'press_rel': pressure, 'time': now}
+
+
+def correctForAltitude(press, temp, alti):
+    denom = temp + 273.15 + 0.0065 * alti
+    val = (1 - (0.0065 * alti)/denom)
+    press_sl = press * pow(val, -5.257)
+    return press_sl
 
 
 if __name__ == '__main__':
     runme = True
+    os.makedirs('maplinstn', exist_ok=True)
+    outfname = os.path.join('maplinstn','bmp280.json')
     while runme is True:
         data = getTempAndPress()
+        with open(outfname, 'a+') as outf:
+            outf.write(json.dumps(data) + '\n')
         sendDataToMQTT(data)
         time.sleep(SLEEP_TIME)
         if os.path.isfile(STOPFILE):
