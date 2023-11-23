@@ -52,6 +52,26 @@ def sendDataToMQTT(data):
     return ret
 
 
+def windChill(t, v):
+    wc = 13.12 + 0.6215 * t -11.37 * pow(v, 0.16) + 0.3965 * t * pow(v, 0.16)
+    return round(wc,2)
+
+
+def heatIndex(t, rh):
+    c_1 = -8.78469475556
+    c_2 = 1.61139411
+    c_3 = 2.33854883889
+    c_4 = -0.14611605
+    c_5 = -0.012308094
+    c_6 = -0.016425
+    c_7 = 2.211732e-3
+    c_8 = 7.2546e-4
+    c_9 = -3.582e-6
+    HI =c_1 + c_2 * t + c_3 * rh + c_4 * t*rh +c_5 * t*t + \
+        c_6 * rh*rh + c_7 * t*t*rh + c_8 *t *rh*rh +c_9*t*t * rh*rh
+    return round(HI,2)
+
+
 def csvToMQ(fname, priordata):
     lis = open(fname,'r').readlines()
     lastline = lis[-1].strip()
@@ -63,6 +83,15 @@ def csvToMQ(fname, priordata):
             writeLogEntry('data unchanged\n')
             return lastline
         eles = json.loads(lastline)
+        t = eles['temperature_C']
+        v = eles['wind_avg_km_h']
+        h = eles['humidity']
+        if t < 12:
+            eles['feels_like'] = windChill(t, v)
+        elif t > 26:
+            eles['feels_like'] = heatIndex(t, h)
+        else:
+            eles['feels_like'] = eles['temperature']
         sendDataToMQTT(eles)
     return lastline
 
