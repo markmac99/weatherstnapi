@@ -86,12 +86,13 @@ def csvToMQ(fname, priordata):
         t = eles['temperature_C']
         v = eles['wind_avg_km_h']
         h = eles['humidity']
-        if t < 12:
-            eles['feels_like'] = windChill(t, v)
-        elif t > 26:
-            eles['feels_like'] = heatIndex(t, h)
-        else:
-            eles['feels_like'] = eles['temperature']
+        eles['feels_like'] = t
+        wc = windChill(t, v)
+        hi = heatIndex(t, h)
+        if wc < t:
+            eles['feels_like'] = wc
+        elif t > 26 and hi > t:
+            eles['feels_like'] = hi
         sendDataToMQTT(eles)
     return lastline
 
