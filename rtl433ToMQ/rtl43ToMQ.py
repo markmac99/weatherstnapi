@@ -13,6 +13,7 @@ import sys
 import math
 import paho.mqtt.client as mqtt
 
+from mqConfig import readConfig
 
 LOG_DIRECTORY = './logs/' 
 STOPFILE = './stopwhfwd' # to allow a clean stop from systemd
@@ -40,8 +41,7 @@ def on_publish(client, userdata, result):
 
 
 def sendDataToMQTT(data):
-    broker = 'themcintyres.ddns.net'
-    mqport = 9883
+    broker, mqport = readConfig()
     client = mqtt.Client('wh1080_fwd')
     client.on_connect = on_connect
     client.on_publish = on_publish
@@ -83,7 +83,7 @@ def dewPoint(t, rh):
     return round(dewPoint,2)
 
 
-def csvToMQ(fname, priordata):
+def jsonToMQ(fname, priordata):
     lis = open(fname,'r').readlines()
     lastline = lis[-1].strip()
     if lastline[-6:] != '"CRC"}':
@@ -115,7 +115,10 @@ if __name__=='__main__':
     runme = True
     prevdata={}
     while runme is True:
-        prevdata = csvToMQ(fname, prevdata)
+        if os.path.isfile(fname):
+            prevdata = jsonToMQ(fname, prevdata)
+        else:
+            writeLogEntry('datafile not found\n')
         time.sleep(SLEEP_TIME)
         if os.path.isfile(STOPFILE):
             writeLogEntry('Exiting...\n=====')

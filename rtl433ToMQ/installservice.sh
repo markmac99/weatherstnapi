@@ -3,15 +3,12 @@
 # copyright Mark McIntyre, 2023-
 
 # install service to read from my WH1080 / Maplin weatherstation outdoor sensors
-
-# pretty sure this needs apt-get install rtl-sdr librtlsdr-dev
-# rtl_433 should be downloaded from github and built locally
-
-# rtl_433 should be able to publish to MQ but I'm having problems with it. 
-# might work on a new build pi
+# and republish on MQ, with some additional derived data
 
 here="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 cd $here
+mkdir -p $here/logs
+mkdir -p $here/maplinstn
 
 sudo cp rtl2mq.service /etc/systemd/system/
 sudo cp rtl_433.service /etc/systemd/system/
