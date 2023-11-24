@@ -10,6 +10,7 @@ import time
 import os
 import json
 import sys
+import math
 import paho.mqtt.client as mqtt
 
 
@@ -72,6 +73,16 @@ def heatIndex(t, rh):
     return round(HI,2)
 
 
+def dewPoint(t, rh): 
+    # t in C, rh as a number eg 90, 50
+    E0 = 0.611 # kPa
+    lrv = 5423 # K (L/Rv over flat surface of water)
+    T0 = 273.15 # K
+    Es = E0 * math.exp(lrv * (1/T0 - 1/(t + T0)))
+    dewPoint = 1.0 / (-math.log(rh/100 * Es/E0)/lrv + 1/T0)-T0
+    return round(dewPoint,2)
+
+
 def csvToMQ(fname, priordata):
     lis = open(fname,'r').readlines()
     lastline = lis[-1].strip()
@@ -93,6 +104,7 @@ def csvToMQ(fname, priordata):
             eles['feels_like'] = wc
         elif t > 26 and hi > t:
             eles['feels_like'] = hi
+        eles['dew_point'] = dewPoint(t, h)
         sendDataToMQTT(eles)
     return lastline
 
