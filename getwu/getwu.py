@@ -9,6 +9,8 @@ import datetime
 from openhab import OpenHAB
 import os
 import paho.mqtt.client as mqtt
+
+from mqConfig import readConfig
 from wuconfig import stationid, getWUkey, getOpenhabURL
 
 
@@ -33,8 +35,7 @@ def on_publish(client, userdata, result):
 
 
 def sendDataToMQTT(data):
-    broker = 'themcintyres.ddns.net'
-    mqport = 9883
+    broker, mqport = readConfig()
     client = mqtt.Client('bresser_wu')
     client.on_connect = on_connect
     client.on_publish = on_publish

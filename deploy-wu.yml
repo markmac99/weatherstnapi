@@ -15,7 +15,20 @@
     with_items:
     - {src: '{{srcdir}}/getwu.py', dest: '{{wudir}}/', mode: '644', backup: yes }
     - {src: '{{srcdir}}/wuconfig.py', dest: '{{wudir}}/', mode: '644', backup: yes }
+    - {src: '{{srcdir}}/mqConfig.py', dest: '{{wudir}}/', mode: '644', backup: yes }
     - {src: '{{srcdir}}/getBresserData.sh', dest: '{{wudir}}/', mode: '754', backup: yes }
     - {src: '{{srcdir}}/installGetWu.sh', dest: '{{wudir}}/', mode: '754', backup: yes }
     - {src: '{{srcdir}}/getwu.service', dest: '{{wudir}}/', mode: '644', backup: yes }
-    - {src: '{{srcdir}}/wurequirements.txt', dest: '{{wudir}}/', mode: '644', backup: yes }
+    - {src: '{{srcdir}}/requirements.txt', dest: '{{wudir}}/', mode: '644', backup: yes }
+
+  - name: update broker
+    ansible.builtin.replace:
+      path: '{{wudir}}/mqConfig.py'
+      regexp: "someserver.net"
+      replace: "themcintyres.ddns.net"
+
+  - name: update mqport 
+    ansible.builtin.replace:
+      path: '{{wudir}}/mqConfig.py'
+      regexp: "1883"
+      replace: "9883"
