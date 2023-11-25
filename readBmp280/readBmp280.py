@@ -7,6 +7,9 @@ import datetime
 import os
 import json
 import paho.mqtt.client as mqtt
+
+from mqConfig import readConfig, stationAltitude
+
 from bme280 import bme280, bme280_i2c
 
 
@@ -36,8 +39,7 @@ def on_publish(client, userdata, result):
 
 
 def sendDataToMQTT(data):
-    broker = 'themcintyres.ddns.net'
-    mqport = 9883
+    broker, mqport = readConfig()
     client = mqtt.Client('bmp280_fwd')
     client.on_connect = on_connect
     client.on_publish = on_publish
@@ -52,7 +54,7 @@ def sendDataToMQTT(data):
 def getTempPressHum():
     data = bme280.read_all()
     humidity, pressure, cTemp = data
-    pressure = correctForAltitude(pressure, cTemp, 80)
+    pressure = correctForAltitude(pressure, cTemp, stationAltitude())
     now = datetime.datetime.now().isoformat()[:19]+'Z'
     return {'temp_c_in': round(cTemp,2), 'press_rel': round(pressure,2), 'humidity_in': round(humidity,2), 'time': now}
 
