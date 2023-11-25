@@ -45,7 +45,12 @@ def sendDataToMQTT(data):
     client = mqtt.Client('wh1080_fwd')
     client.on_connect = on_connect
     client.on_publish = on_publish
-    client.connect(broker, mqport, 60)
+    try:
+        client.connect(broker, mqport, 60)
+    except Exception as e:
+        print(e)
+        print('will try again shorly')
+        return 0
     for ele in data:
         topic = f'sensors/wh1080/{ele}'
         ret = client.publish(topic, payload=data[ele], qos=0, retain=False)
