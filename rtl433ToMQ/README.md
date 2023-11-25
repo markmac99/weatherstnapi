@@ -14,11 +14,11 @@ also strongly recommend you install into a python virtual environment to avoid c
 python environment used by apt and othe system tools.
 ``` bash
 sudo apt-get install rtl-sdr librtlsdr-dev
-sudo apt-get install libtool libusb-1.0-0-dev librtlsdr-dev rtl-sdr build-essential cmake pkg-config
+sudo apt-get install libtool libusb-1.0-0-dev build-essential cmake pkg-config
 sudo apt-get install python3-venv
 ```
 ## Building rtl_433
-Download the code from github, then build and install it:
+Download the code from [github](https://github.com/merbanan/rtl_433), then build and install it:
 ``` bash
 mkdir -p  ~/source 
 cd ~/source
@@ -41,7 +41,7 @@ You should get some initialisation messages, and then after a short while you sh
 from any 433 MHz sensors in your area. This could include thermostats, garage door openers, tyre pressure monitors,
 and other household devices as well as your weatherstation! 
 
-If you get an error that permissions are wrong, copy the UDEV rules file in this repository  to the location
+If you get an error that permissions are wrong, copy the UDEV rules file in this repository to the location
 shown below and restart the pi:
 ``` bash
 sudo cp rtl-sdr.rules /etc/udev/rules.d

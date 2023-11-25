@@ -63,12 +63,14 @@ if __name__=='__main__':
         data = json.loads(lis[0].strip())
     except:
         data = {'temp_c_in': 0, 'press_rel':0, 'wind_max_km_h':0, 'rain_mm':0,
-            'wind_avg_km_h':0, 'wind_dir_deg':0, 'temperature_C':0,'humidity':0}
+            'wind_avg_km_h':0, 'wind_dir_deg':0, 'temperature_C':0,'humidity':0,
+            'humidity_in':0}
         with open(datafile, 'w') as outf:
             outf.write('{}'.format(json.dumps(data)))
 
     client.subscribe([('sensors/wh1080/rain_mm',2),('sensors/bmp280/temp_c_in',2), 
                       ('sensors/bmp280/press_rel',2),('sensors/wh1080/wind_max_km_h',2),
                       ('sensors/wh1080/wind_avg_km_h',2),('sensors/wh1080/wind_dir_deg',2),
-                      ('sensors/wh1080/temperature_C',2),('sensors/wh1080/humidity',2)])
+                      ('sensors/wh1080/temperature_C',2),('sensors/wh1080/humidity',2),
+                      ('sensors/bmp280/humidity_in',2)])
     client.loop_forever()
