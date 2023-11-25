@@ -1,15 +1,17 @@
-# README for redBmp280
+# README for readBmp280
 
 This programme reads pressure, temperature and humidity from a BMP280/bME280 sensor attached to a Pi.
 
 ## Connection to the Pi
+``` bash
 Vin => 1 (or any 3.3v pin) 
+Sda => 3 (but can be any of GP02,06,10,14,18,26)
+Scl => 5 (but can be any of GP03,07,11,15,19,27)
 Gnd => 9 (or any Gnd pin)
-Scl => 5 (but can be any of GP02,06,10,14,18,26)
-Sda => 3 (but can be any of GP03,07,11,15,19,27)
+```
 
 ## Python Requirements
-I recommend creating a python virtual environment. Mine is called pywws but if you choose a different name you'll need to updte *bmp280.sh* to activate it. 
+I recommend creating a python virtual environment. Mine is called pywws: if you choose a different name you'll need to updte *bmp280.sh* to activate it properly. 
 Requirements are *paho-mqtt*, *smbus* and *bme280* and can be installed with pip using the requirements file. 
 
 ## Configuration
