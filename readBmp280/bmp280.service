@@ -3,7 +3,7 @@ Description=Get temp press and hum from BMP280 breakout board
 After=network.target
 
 [Service]
-ExecStart=/home/pi/weather/bmp280.sh
+ExecStart=/home/pi/weather/readBmp280/bmp280.sh
 ExecStop=/usr/bin/touch /home/pi/weather/stopbmp280
 Restart=always
 RestartSec=5

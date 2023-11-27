@@ -5,6 +5,7 @@
 import time
 import datetime
 import os
+import sys
 import json
 import paho.mqtt.client as mqtt
 
@@ -13,13 +14,8 @@ from mqConfig import readConfig, stationAltitude
 from bme280 import bme280, bme280_i2c
 
 
-LOG_DIRECTORY = './logs/' 
-STOPFILE = './stopbmp280' # to allow a clean stop from systemd
-SLEEP_TIME = 60 # secods 
-
-
-def writeLogEntry(msg):
-    with open(LOG_DIRECTORY+"bmp280-"+datetime.datetime.now().strftime("%Y%m%d")+".log", mode='a+', encoding='utf-8') as f:
+def writeLogEntry(logdir, msg):
+    with open(os.path.join(logdir, "bmp280-"+datetime.datetime.now().strftime("%Y%m%d")+".log"), mode='a+', encoding='utf-8') as f:
         nowdt = datetime.datetime.now().isoformat()
         f.write(f'{nowdt}: {msg}')
 
@@ -38,7 +34,7 @@ def on_publish(client, userdata, result):
     return
 
 
-def sendDataToMQTT(data):
+def sendDataToMQTT(data, logdir):
     broker, mqport = readConfig()
     client = mqtt.Client('bmp280_fwd')
     client.on_connect = on_connect
@@ -47,7 +43,7 @@ def sendDataToMQTT(data):
     for ele in data:
         topic = f'sensors/bmp280/{ele}'
         ret = client.publish(topic, payload=data[ele], qos=0, retain=False)
-    writeLogEntry(f'sent {data}\n')
+    writeLogEntry(logdir, f'sent {data}\n')
     return ret
 
 
@@ -68,9 +64,18 @@ def correctForAltitude(press, temp, alti):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        outdir = './maplinstn'
+        logdir = './logs'
+        stopfile = './stopbmp280' # to allow a clean stop from systemd
+    else:
+        outdir = os.path.join(sys.argv[1], 'maplinstn')
+        logdir = os.path.join(sys.argv[1], 'logs')
+        stopfile = os.path.join(sys.argv[1], 'stopbmp280')
     runme = True
-    os.makedirs('maplinstn', exist_ok=True)
-    outfname = os.path.join('maplinstn','bmp280.json')
+    os.makedirs(outdir, exist_ok=True)
+    os.makedirs(logdir, exist_ok=True)
+    outfname = os.path.join(outdir,'bmp280.json')
     bme280_i2c.set_default_i2c_address(0x76)
     bme280_i2c.set_default_bus(1)
     bme280.setup()
@@ -78,10 +83,10 @@ if __name__ == '__main__':
         data = getTempPressHum()
         with open(outfname, 'a+') as outf:
             outf.write(json.dumps(data) + '\n')
-        sendDataToMQTT(data)
-        time.sleep(SLEEP_TIME)
-        if os.path.isfile(STOPFILE):
-            writeLogEntry('Exiting...\n==========\n')
-            os.remove(STOPFILE)
+        sendDataToMQTT(data, logdir)
+        time.sleep(60)
+        if os.path.isfile(stopfile):
+            writeLogEntry(logdir, 'Exiting...\n==========\n')
+            os.remove(stopfile)
             runme = False
             break

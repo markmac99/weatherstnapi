@@ -17,14 +17,18 @@ Requirements are *paho-mqtt*, *smbus* and *bme280* and can be installed with pip
 ## Configuration
 Insert your MQ broker and port details into *mqConfig.py*
 Also in this file, set your station's altitude above sea level. This is used to calibrate the pressure. 
+Update ExecStart in *bmp280.service* to reflect the location in which you've installed the script. Default is */home/pi/weather/readBmp280*.
+Update *bmp280.sh* to reflect where you want the output to be written.  Default is */home/pi/weather*.
+Update ExecStop in *bmp280.service* to reference the same location.
 
 ## Installation
 Run the *installservice.sh* script. This will install and start a service *bmp280*
+To stop the service, run *sudo systemctl stop bmp280*.
 
-# Output
-The programme generates a log in *./logs*
-The programme generates a JSON file in *./maplinstn* containing the most recent data. 
-You'll need to periodically delete this file to save space. 
+# Logging Output
+The programme generates a log in a *logs* folder and a JSON data file in a folder *maplinstn* 
+relative to the output location you specified. You'll need to keep an eye on the sizes of these folders
+and delete files as needed. 
 
 # MQ output
 The service publishes to four MQTT topics 
