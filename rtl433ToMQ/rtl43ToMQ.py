@@ -49,7 +49,7 @@ def sendDataToMQTT(data):
         client.connect(broker, mqport, 60)
     except Exception as e:
         print(e)
-        print('will try again shorly')
+        writeLogEntry('Unable to connect to MQ - will try again shortly\n')
         return 0
     for ele in data:
         topic = f'sensors/wh1080/{ele}'
@@ -89,14 +89,14 @@ def dewPoint(t, rh):
 
 
 def jsonToMQ(fname, priordata):
-    lis = open(fname,'r').readlines()
+    lis = open(fname, 'r').readlines()
     lastline = lis[-1].strip()
     if lastline[-6:] != '"CRC"}':
-        print('malformed line')
+        writeLogEntry(f'malformed line {lastline}\n')
         return 
     else:
         if lastline == priordata:
-            writeLogEntry('data unchanged\n')
+            writeLogEntry(f'data unchanged {lastline}\n')
             return lastline
         eles = json.loads(lastline)
         t = eles['temperature_C']
