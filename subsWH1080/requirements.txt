@@ -1,0 +1,2 @@
+# requirements for subsWH1080
+paho-mqtt

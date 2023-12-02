@@ -3,8 +3,8 @@ Description=Get WH1080 data from Rtl433
 After=network.target
 
 [Service]
-ExecStart=/home/pi/weather/runRtl433.sh
-ExecStop=/home/pi/weather/stopRtl433.sh
+ExecStart=/home/pi/weather/rtl433/runRtl433.sh
+ExecStop=/home/pi/weather/rtl433/stopRtl433.sh
 Restart=always
 RestartSec=5
 

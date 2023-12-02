@@ -3,7 +3,7 @@ Description=Get WH1080 data from Rtl433
 After=network.target
 
 [Service]
-ExecStart=/home/pi/weather/rtlToMQ.sh
+ExecStart=/home/pi/weather/rtl433/rtlToMQ.sh
 ExecStop=/usr/bin/touch /home/pi/weather/stopwhfwd
 Restart=always
 RestartSec=5

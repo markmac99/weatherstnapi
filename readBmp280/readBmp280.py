@@ -52,7 +52,7 @@ def getTempPressHum():
     humidity, pressure, cTemp = data
     pressure = correctForAltitude(pressure, cTemp, stationAltitude())
     now = datetime.datetime.now().isoformat()[:19]+'Z'
-    return {'temp_c_in': round(cTemp,2), 'press_rel': round(pressure,2), 'humidity_in': round(humidity,2), 'time': now}
+    return {'temp_c_in': round(cTemp,4), 'press_rel': round(pressure,4), 'humidity_in': round(humidity,4), 'time': now}
 
 
 
@@ -60,7 +60,7 @@ def correctForAltitude(press, temp, alti):
     denom = temp + 273.15 + 0.0065 * alti
     val = (1 - (0.0065 * alti)/denom)
     press_sl = press * pow(val, -5.257)
-    return round(press_sl,2)
+    return round(press_sl,4)
 
 
 if __name__ == '__main__':

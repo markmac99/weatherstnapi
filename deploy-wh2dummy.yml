@@ -1,0 +1,21 @@
+- hosts: weatherpi3
+  vars:
+    srcdir: /mnt/e/dev/weather/weatherstnapi/whtodummy
+    targdir: ~/weather/whtodummy
+  environment: 
+    LD_LIBRARY_PATH: /usr/local/lib
+  tasks:
+  - name: Copy files
+    copy: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }}
+    with_items:
+    - {src: '{{srcdir}}/whToDummy.py', dest: '{{targdir}}/', mode: '644', backup: yes }
+    - {src: '{{srcdir}}/whConfig.py', dest: '{{targdir}}/', mode: '644', backup: yes }
+    - {src: '{{srcdir}}/whTodummy.sh', dest: '{{targdir}}/', mode: '754', backup: yes }
+    - {src: '{{srcdir}}/install.sh', dest: '{{targdir}}/', mode: '754', backup: yes }
+    - {src: '{{srcdir}}/requirements.txt', dest: '{{targdir}}/', mode: '644', backup: yes }
+
+#  - name: update broker
+#    ansible.builtin.replace:
+#      path: '{{targdir}}/whConfig.py'
+#      regexp: "someserver.net"
+#      replace: "wxsatpi"

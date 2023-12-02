@@ -8,56 +8,70 @@ import json
 import datetime
 import paho.mqtt.client as mqtt
 
-
-LOG_DIRECTORY = 'logs' 
-STOPFILE = './stopreadmq' # to allow a clean stop from systemd
-SLEEP_TIME = 60 # secods 
+from mqConfig import readConfig
 
 
 def writeLogEntry(msg):
-    os.makedirs(LOG_DIRECTORY, exist_ok=True)
-    with open(os.path.join(LOG_DIRECTORY,"readmq-"+datetime.datetime.now().strftime("%Y%m%d")+".log"), mode='a+', encoding='utf-8') as f:
+    os.makedirs(logdir, exist_ok=True)
+    with open(os.path.join(logdir, "readmq-"+datetime.datetime.now().strftime("%Y%m%d")+".log"), mode='a+', encoding='utf-8') as f:
         nowdt = datetime.datetime.now().isoformat()
         f.write('{}: {}\n'.format(nowdt, msg))
 
 
 # The MQTT callback function. It will be triggered when trying to connect to the MQTT broker
 def on_connect(client, userdata, flags, rc):
+    x = client.subscribe([('sensors/wh1080/rain_mm',2),('sensors/bmp280/temp_c_in',2), 
+                      ('sensors/bmp280/press_rel',2),('sensors/wh1080/wind_max_km_h',2),
+                      ('sensors/wh1080/wind_avg_km_h',2),('sensors/wh1080/wind_dir_deg',2),
+                      ('sensors/wh1080/temperature_C',2),('sensors/wh1080/humidity',2),
+                      ('sensors/bmp280/humidity_in',2)])
+    #writeLogEntry("subscription status " + str(x))
     if rc == 0:
         writeLogEntry("Connected success")
     else:
-        writeLogEntry("Connected fail with code", rc)
+        writeLogEntry("Connected fail with code" + str(rc))
 
 
-# the MQ publish function
+# the MQ subscribe callback
 def on_subscribe(mosq, obj, mid, granted_qos):
     writeLogEntry("Subscribed: " + str(mid) + " " + str(granted_qos))
 
 
+def on_disconnect(a,b,c):
+    writeLogEntry("disconnected")
+
+
 def on_message(mosq, obj, msg):
-    datafile = os.path.join(outfdir,'weatherdata.json')
     lis = open(datafile,'r').readlines()
     olddata = json.loads(lis[0].strip())
     topic = os.path.split(msg.topic)[1]
     val = float(msg.payload.decode())
     olddata[topic] = val
-    writeLogEntry('{} {}'.format(msg.topic, olddata))
     with open(datafile,'w') as outf:
         outf.write('{}'.format(json.dumps(olddata)))
+    writeLogEntry(olddata)
 
 
 if __name__=='__main__':
-    global outfdir
-    outfdir = sys.argv[1]
-    broker = 'wxsatpi'
-    mqport = 1883
-    writeLogEntry('=====\nStarting...\n')
-    client = mqtt.Client('readweather')
+    global datafile
+    global logdir
+    dtstr = datetime.datetime.now().strftime('%Y%m%d')
+    if len(sys.argv) < 2:
+        outdir = '.'
+        logdir = './logs'
+    else:
+        outdir = sys.argv[1]
+        logdir = os.path.join(sys.argv[1], 'logs')
+    broker, mqport = readConfig()
+    writeLogEntry('===== Starting...')
+    client = mqtt.Client('readweather', clean_session=False)
     client.on_connect = on_connect
     client.on_subscribe = on_subscribe
+    client.on_disconnect = on_disconnect
     client.on_message = on_message
     client.connect(broker, mqport, 60)
-    datafile = os.path.join(outfdir,'weatherdata.json')
+    os.makedirs(outdir, exist_ok=True)
+    datafile = os.path.join(outdir,'weatherdata.json')
     try: 
         lis = open(datafile,'r').readlines()
         data = json.loads(lis[0].strip())
@@ -73,4 +87,4 @@ if __name__=='__main__':
                       ('sensors/wh1080/wind_avg_km_h',2),('sensors/wh1080/wind_dir_deg',2),
                       ('sensors/wh1080/temperature_C',2),('sensors/wh1080/humidity',2),
                       ('sensors/bmp280/humidity_in',2)])
-    client.loop_forever()
+    client.loop_forever(timeout=10)

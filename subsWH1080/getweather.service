@@ -3,8 +3,8 @@ Description=Get Weatherdata from MQ
 After=network.target
 
 [Service]
-ExecStart=/home/pi/weather/frommq/getWeatherData.sh
-ExecStop=/home/pi/weather/frommq/stopGW.sh
+ExecStart=/home/pi/weather/subswh1080/getWeatherData.sh
+ExecStop=/home/pi/weather/subswh1080/stopGW.sh
 Restart=always
 RestartSec=5
 
