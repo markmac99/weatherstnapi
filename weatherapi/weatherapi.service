@@ -1,0 +1,16 @@
+[Unit]
+Description=Expose weatherdata using flask
+After=network.target
+
+[Service]
+ExecStart=/home/pi/weather/weatherapi/startup.sh
+ExecStop=/home/pi/weather/weatherapi/stop.sh
+Restart=always
+RestartSec=5
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+
+# sudo cp weatherapi.service /lib/systemd/system/
+# sudo systemctl daemon-reload && sudo systemctl enable weatherapi && sudo systemctl start weatherapi

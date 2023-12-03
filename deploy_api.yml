@@ -1,9 +1,8 @@
-- hosts: weatherpi
+- hosts: weatherpi3
   vars:
     srcdir: /mnt/e/dev/weather/weatherstnapi/weatherapi
+    apidir: ~/weather/weatherapi
   tasks:
-  - name: import prod variables
-    include_vars: local-vars.yml
 
   - name: Ensures {{apidir}} exists
     file: path={{apidir}} state=directory  
@@ -14,5 +13,7 @@
     with_items:
     - {src: '{{srcdir}}/weatherapi.py', dest: '{{apidir}}/', mode: '644', backup: yes }
     - {src: '{{srcdir}}/getLastData.py', dest: '{{apidir}}/', mode: '644', backup: yes }
-    - {src: '{{srcdir}}/apirequirements.txt', dest: '{{apidir}}/', mode: '644', backup: yes }
+    - {src: '{{srcdir}}/requirements.txt', dest: '{{apidir}}/', mode: '644', backup: yes }
     - {src: '{{srcdir}}/startup.sh', dest: '{{apidir}}/', mode: '754', backup: yes }
+    - {src: '{{srcdir}}/stop.sh', dest: '{{apidir}}/', mode: '754', backup: yes }
+    - {src: '{{srcdir}}/weatherapi.service', dest: '{{apidir}}/', mode: '644', backup: yes }

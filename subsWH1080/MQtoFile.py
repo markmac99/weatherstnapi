@@ -20,7 +20,7 @@ def writeLogEntry(msg):
 
 # The MQTT callback function. It will be triggered when trying to connect to the MQTT broker
 def on_connect(client, userdata, flags, rc):
-    x = client.subscribe([('sensors/wh1080/rain_mm',2),('sensors/bmp280/temp_c_in',2), 
+    client.subscribe([('sensors/wh1080/rain_mm',2),('sensors/bmp280/temp_c_in',2), 
                       ('sensors/bmp280/press_rel',2),('sensors/wh1080/wind_max_km_h',2),
                       ('sensors/wh1080/wind_avg_km_h',2),('sensors/wh1080/wind_dir_deg',2),
                       ('sensors/wh1080/temperature_C',2),('sensors/wh1080/humidity',2),
@@ -35,6 +35,7 @@ def on_connect(client, userdata, flags, rc):
 # the MQ subscribe callback
 def on_subscribe(mosq, obj, mid, granted_qos):
     writeLogEntry("Subscribed: " + str(mid) + " " + str(granted_qos))
+    return 
 
 
 def on_disconnect(a,b,c):
@@ -87,4 +88,4 @@ if __name__=='__main__':
                       ('sensors/wh1080/wind_avg_km_h',2),('sensors/wh1080/wind_dir_deg',2),
                       ('sensors/wh1080/temperature_C',2),('sensors/wh1080/humidity',2),
                       ('sensors/bmp280/humidity_in',2)])
-    client.loop_forever(timeout=10)
+    client.loop_forever(retry_first_connection=True)
