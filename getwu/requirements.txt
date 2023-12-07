@@ -1,5 +1,0 @@
-# requirements for getwu
-
-python-openhab
-backoff
-paho-mqtt
